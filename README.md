@@ -17,4 +17,4 @@ Idea scoped, no code written yet. See `docs/tickets/` for the first ticket.
 
 ## Tickets
 
-- [001 — Building characteristics input form](docs/tickets/001-building-characteristics-form.md)
+- [001 — Building characteristics input form](docs/tickets/001-building-characteristics-form/ticket.md)
