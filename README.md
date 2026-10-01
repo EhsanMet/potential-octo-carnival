@@ -13,7 +13,18 @@ suggests improvements based on them.
 
 ## Status
 
-Idea scoped, no code written yet. See `docs/tickets/` for the first ticket.
+Ticket 001 (building characteristics form) is implemented as a small Flask app.
+
+## Running it
+
+```
+pip install -r requirements.txt
+cd docs/tickets/001-building-characteristics-form
+python -m pytest
+python app.py
+```
+
+Then open http://127.0.0.1:5000.
 
 ## Tickets
 

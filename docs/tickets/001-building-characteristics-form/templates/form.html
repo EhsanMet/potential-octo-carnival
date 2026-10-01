@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Building characteristics</title>
+  <style>
+    body { font-family: sans-serif; max-width: 28rem; margin: 2rem auto; padding: 0 1rem; }
+    label { display: block; margin-top: 1rem; font-weight: bold; }
+    input, select { width: 100%; padding: .4rem; box-sizing: border-box; }
+    .error { color: #b00020; margin: .25rem 0 0; }
+    .confirmed { background: #e6f4ea; padding: .75rem; }
+    button { margin-top: 1.5rem; padding: .5rem 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Building characteristics</h1>
+
+  {% set errors = result.errors if result else {} %}
+  {% if result and result.status == "confirmed" %}
+    <p class="confirmed">{{ result.message }}</p>
+  {% endif %}
+
+  <form method="post" novalidate>
+    <label for="zip_code">Zip code</label>
+    <input id="zip_code" name="zip_code" inputmode="numeric" value="{{ values.zip_code }}">
+    {% if errors.zip_code %}<p class="error">{{ errors.zip_code }}</p>{% endif %}
+
+    <label for="area">Area (m²)</label>
+    <input id="area" name="area" type="number" value="{{ values.area }}">
+    {% if errors.area %}<p class="error">{{ errors.area }}</p>{% endif %}
+
+    <label for="building_age">Building age (years)</label>
+    <input id="building_age" name="building_age" type="number" value="{{ values.building_age }}">
+    {% if errors.building_age %}<p class="error">{{ errors.building_age }}</p>{% endif %}
+
+    <label for="heating_type">Heating type</label>
+    <select id="heating_type" name="heating_type">
+      <option value="">Choose…</option>
+      {% for option in heating_types %}
+        <option {% if values.heating_type == option %}selected{% endif %}>{{ option }}</option>
+      {% endfor %}
+    </select>
+    {% if errors.heating_type %}<p class="error">{{ errors.heating_type }}</p>{% endif %}
+
+    <label for="windows_type">Windows type</label>
+    <select id="windows_type" name="windows_type">
+      <option value="">Choose…</option>
+      {% for option in window_types %}
+        <option {% if values.windows_type == option %}selected{% endif %}>{{ option }}</option>
+      {% endfor %}
+    </select>
+    {% if errors.windows_type %}<p class="error">{{ errors.windows_type }}</p>{% endif %}
+
+    <button type="submit">Save</button>
+  </form>
+</body>
+</html>
