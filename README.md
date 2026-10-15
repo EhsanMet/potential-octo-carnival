@@ -13,7 +13,11 @@ suggests improvements based on them.
 
 ## Status
 
-Ticket 001 (building characteristics form) is implemented as a small Flask app.
+Ticket 001 (building characteristics form) is implemented as a small Flask app. Its UI has
+been polished with floating labels and a full-width round Save button.
+
+Not built yet: utility bill entry, the improvement-suggestion engine, and saving data between
+steps.
 
 ## Running it
 
