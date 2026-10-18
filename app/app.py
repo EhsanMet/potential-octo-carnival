@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 
-from validators import HEATING_TYPES, WINDOW_TYPES, validate_building_characteristics
+from validators.building import HEATING_TYPES, WINDOW_TYPES, validate_building_characteristics
 
 app = Flask(__name__)
 
@@ -27,7 +27,7 @@ def building_form():
             windows_type=values["windows_type"],
         )
     return render_template(
-        "form.html",
+        "building_form.html",
         values=values,
         result=result,
         heating_types=HEATING_TYPES,

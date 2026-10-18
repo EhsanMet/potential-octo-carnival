@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Building characteristics{% endblock %}
+
+{% block content %}
+  <h1>Building characteristics</h1>
+
+  {% set errors = result.errors if result else {} %}
+  {% if result and result.status == "confirmed" %}
+    <p class="confirmed">{{ result.message }}</p>
+  {% endif %}
+
+  <form method="post" novalidate>
+    <div class="field">
+      <input id="zip_code" name="zip_code" inputmode="numeric" placeholder=" " value="{{ values.zip_code }}">
+      <label for="zip_code">Zip code</label>
+    </div>
+    {% if errors.zip_code %}<p class="error">{{ errors.zip_code }}</p>{% endif %}
+
+    <div class="field">
+      <input id="area" name="area" type="number" placeholder=" " value="{{ values.area }}">
+      <label for="area">Area (m²)</label>
+    </div>
+    {% if errors.area %}<p class="error">{{ errors.area }}</p>{% endif %}
+
+    <div class="field">
+      <input id="building_age" name="building_age" type="number" placeholder=" " value="{{ values.building_age }}">
+      <label for="building_age">Building age (years)</label>
+    </div>
+    {% if errors.building_age %}<p class="error">{{ errors.building_age }}</p>{% endif %}
+
+    <div class="field select-field">
+      <select id="heating_type" name="heating_type">
+        <option value="">Choose…</option>
+        {% for option in heating_types %}
+          <option {% if values.heating_type == option %}selected{% endif %}>{{ option }}</option>
+        {% endfor %}
+      </select>
+      <label for="heating_type">Heating type</label>
+    </div>
+    {% if errors.heating_type %}<p class="error">{{ errors.heating_type }}</p>{% endif %}
+
+    <div class="field select-field">
+      <select id="windows_type" name="windows_type">
+        <option value="">Choose…</option>
+        {% for option in window_types %}
+          <option {% if values.windows_type == option %}selected{% endif %}>{{ option }}</option>
+        {% endfor %}
+      </select>
+      <label for="windows_type">Windows type</label>
+    </div>
+    {% if errors.windows_type %}<p class="error">{{ errors.windows_type }}</p>{% endif %}
+
+    <button type="submit">Save</button>
+  </form>
+{% endblock %}

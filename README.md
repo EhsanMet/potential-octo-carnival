@@ -14,7 +14,8 @@ suggests improvements based on them.
 ## Status
 
 Ticket 001 (building characteristics form) is implemented as a small Flask app. Its UI has
-been polished with floating labels and a full-width round Save button.
+been polished with floating labels and a full-width round Save button. The app code lives in
+`app/`; `docs/tickets/` holds only the ticket and spec documents.
 
 Not built yet: utility bill entry, the improvement-suggestion engine, and saving data between
 steps.
@@ -23,7 +24,7 @@ steps.
 
 ```
 pip install -r requirements.txt
-cd docs/tickets/001-building-characteristics-form
+cd app
 python -m pytest
 python app.py
 ```

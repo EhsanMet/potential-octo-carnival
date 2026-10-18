@@ -1,6 +1,6 @@
 import pytest
 
-from validators import (
+from validators.building import (
     HEATING_TYPES,
     WINDOW_TYPES,
     validate_area,

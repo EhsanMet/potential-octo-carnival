@@ -1,3 +1,5 @@
+from validators.common import is_integer
+
 GERMANY_ZIP_MIN = 1067
 GERMANY_ZIP_MAX = 99998
 
@@ -8,20 +10,16 @@ HEATING_TYPES = ["Gas", "Oil", "District heating", "Heat pump", "Electric", "Woo
 WINDOW_TYPES = ["1 layer", "2 layers", "3 layers"]
 
 
-def _is_integer(value):
-    return isinstance(value, int) and not isinstance(value, bool)
-
-
 def validate_zip_code(zip_code):
-    return _is_integer(zip_code) and GERMANY_ZIP_MIN <= zip_code <= GERMANY_ZIP_MAX
+    return is_integer(zip_code) and GERMANY_ZIP_MIN <= zip_code <= GERMANY_ZIP_MAX
 
 
 def validate_area(area):
-    return _is_integer(area) and 0 < area < AREA_MAX
+    return is_integer(area) and 0 < area < AREA_MAX
 
 
 def validate_building_age(building_age):
-    return _is_integer(building_age) and 0 <= building_age < BUILDING_AGE_MAX
+    return is_integer(building_age) and 0 <= building_age < BUILDING_AGE_MAX
 
 
 def validate_heating_type(heating_type):
