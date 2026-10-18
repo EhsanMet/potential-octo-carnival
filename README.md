@@ -34,3 +34,4 @@ Then open http://127.0.0.1:5000.
 ## Tickets
 
 - [001 — Building characteristics input form](docs/tickets/001-building-characteristics-form/ticket.md)
+- [002 — Utility bill entry form](docs/tickets/002-utility-bill-entry/ticket.md)
