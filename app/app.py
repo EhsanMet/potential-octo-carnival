@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request
 
+from validators.bill import ENERGY_CARRIERS, parse_cost, parse_date, validate_utility_bill
 from validators.building import HEATING_TYPES, WINDOW_TYPES, validate_building_characteristics
 
 app = Flask(__name__)
 
 FIELDS = ["zip_code", "area", "building_age", "heating_type", "windows_type"]
+BILL_FIELDS = ["energy_carrier", "start_date", "end_date", "consumption_kwh", "total_cost"]
 
 
 def _to_int(text):
@@ -32,6 +34,26 @@ def building_form():
         result=result,
         heating_types=HEATING_TYPES,
         window_types=WINDOW_TYPES,
+    )
+
+
+@app.route("/bill", methods=["GET", "POST"])
+def bill_form():
+    values = {field: request.form.get(field, "") for field in BILL_FIELDS}
+    result = None
+    if request.method == "POST":
+        result = validate_utility_bill(
+            energy_carrier=values["energy_carrier"],
+            start_date=parse_date(values["start_date"]),
+            end_date=parse_date(values["end_date"]),
+            consumption_kwh=_to_int(values["consumption_kwh"]),
+            total_cost=parse_cost(values["total_cost"]),
+        )
+    return render_template(
+        "bill_form.html",
+        values=values,
+        result=result,
+        energy_carriers=ENERGY_CARRIERS,
     )
 
 

@@ -13,12 +13,12 @@ suggests improvements based on them.
 
 ## Status
 
-Ticket 001 (building characteristics form) is implemented as a small Flask app. Its UI has
-been polished with floating labels and a full-width round Save button. The app code lives in
-`app/`; `docs/tickets/` holds only the ticket and spec documents.
+Ticket 001 (building characteristics form, `/`) and ticket 002 (utility bill entry, `/bill`) are
+implemented as one small Flask app, sharing the same look (floating labels, round Save button) and
+a nav link between the pages. The app code lives in `app/`; `docs/tickets/` holds only the ticket
+and spec documents.
 
-Not built yet: utility bill entry, the improvement-suggestion engine, and saving data between
-steps.
+Not built yet: the improvement-suggestion engine, and saving data between steps.
 
 ## Running it
 

@@ -14,6 +14,11 @@
     }
     body { font-family: sans-serif; max-width: 28rem; margin: 2rem auto; padding: 0 1rem; color: #1f2328; }
 
+    nav { display: flex; gap: 1.25rem; }
+    nav a { color: var(--label); text-decoration: none; }
+    nav a:hover { color: var(--accent); }
+    nav a[aria-current="page"] { color: var(--accent); font-weight: bold; }
+
     .field { position: relative; margin-top: 1.25rem; }
     .field input, .field select {
       width: 100%; box-sizing: border-box;
@@ -54,6 +59,10 @@
   </style>
 </head>
 <body>
+  <nav>
+    <a href="{{ url_for('building_form') }}" {% if request.endpoint == 'building_form' %}aria-current="page"{% endif %}>Building</a>
+    <a href="{{ url_for('bill_form') }}" {% if request.endpoint == 'bill_form' %}aria-current="page"{% endif %}>Utility bill</a>
+  </nav>
 {% block content %}{% endblock %}
 </body>
 </html>

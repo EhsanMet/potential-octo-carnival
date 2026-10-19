@@ -10,9 +10,10 @@ A separate page (`/bill`) in the shared app with four fields:
 - Total cost (€)
 
 Validation on Save, with an error under each wrong field and a confirmation message when all
-fields are right. Same look as the building form (shared `base.html`).
+fields are right. Same look as the building form (shared `base.html`), with a nav link at the top
+to switch between the two pages.
 
-No persistence and no link to the building form in this ticket.
+No persistence, and no data shared with the building form in this ticket.
 
 ## Why this scope
 
