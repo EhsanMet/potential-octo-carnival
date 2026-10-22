@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 
+from services.postal_lookup import lookup_postal_code
 from validators.bill import ENERGY_CARRIERS, parse_cost, parse_date, validate_utility_bill
 from validators.building import HEATING_TYPES, WINDOW_TYPES, validate_building_characteristics
 
@@ -21,13 +22,17 @@ def building_form():
     values = {field: request.form.get(field, "") for field in FIELDS}
     result = None
     if request.method == "POST":
+        zip_code = _to_int(values["zip_code"])
         result = validate_building_characteristics(
-            zip_code=_to_int(values["zip_code"]),
+            zip_code=zip_code,
             area=_to_int(values["area"]),
             building_age=_to_int(values["building_age"]),
             heating_type=values["heating_type"],
             windows_type=values["windows_type"],
         )
+        # The lookup only adds information; it never blocks saving.
+        if result["status"] == "confirmed":
+            result["location"] = lookup_postal_code(zip_code)
     return render_template(
         "building_form.html",
         values=values,

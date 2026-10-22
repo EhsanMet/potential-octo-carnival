@@ -8,6 +8,21 @@
   {% set errors = result.errors if result else {} %}
   {% if result and result.status == "confirmed" %}
     <p class="confirmed">{{ result.message }}</p>
+    {% set location = result.location %}
+    {% if location and location.status == "found" %}
+      <p class="location">
+        📍 {{ location.post_code }} {{ location.place }}, {{ location.state }}<br>
+        {% if location.latitude is not none and location.longitude is not none %}
+          {{ location.latitude }}, {{ location.longitude }}
+        {% else %}
+          Coordinates not available.
+        {% endif %}
+      </p>
+    {% elif location and location.status == "not_found" %}
+      <p class="location">We couldn't find this postal code in the directory. Please double-check it.</p>
+    {% elif location %}
+      <p class="location">Postal code lookup is not available right now.</p>
+    {% endif %}
   {% endif %}
 
   <form method="post" novalidate>

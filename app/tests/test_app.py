@@ -47,3 +47,27 @@ def test_nav_links_both_pages():
     response = app.test_client().get("/bill")
     assert b'href="/"' in response.data
     assert b'href="/bill"' in response.data
+
+
+def test_valid_submit_shows_location():
+    response = app.test_client().post("/", data=VALID_FORM)
+    assert "📍 10115 Berlin, Berlin" in response.get_data(as_text=True)
+    assert b"52.532, 13.3922" in response.data
+
+
+def test_unknown_postal_code_still_saves_with_note(monkeypatch):
+    import app as app_module
+
+    monkeypatch.setattr(app_module, "lookup_postal_code", lambda zip_code: {"status": "not_found"})
+    response = app.test_client().post("/", data=VALID_FORM)
+    assert b"Building characteristics saved." in response.data
+    assert "couldn't find this postal code" in response.get_data(as_text=True)
+
+
+def test_invalid_form_does_not_call_lookup(monkeypatch):
+    import app as app_module
+
+    calls = []
+    monkeypatch.setattr(app_module, "lookup_postal_code", lambda zip_code: calls.append(zip_code))
+    app.test_client().post("/", data={**VALID_FORM, "area": "abc"})
+    assert calls == []
