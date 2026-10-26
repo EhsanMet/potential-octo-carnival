@@ -18,6 +18,10 @@ implemented as one small Flask app, sharing the same look (floating labels, roun
 a nav link between the pages. The app code lives in `app/`; `docs/tickets/` holds only the ticket
 and spec documents.
 
+The building form checks the postal code with [Zippopotam.us](https://docs.zippopotam.us/docs/v1/)
+and shows the town, state and coordinates. An unknown code blocks saving; if Zippopotam is down,
+the app falls back to a local format check and saves with a note.
+
 Not built yet: the improvement-suggestion engine, and saving data between steps.
 
 ## Running it
