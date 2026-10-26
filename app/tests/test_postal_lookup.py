@@ -27,14 +27,16 @@ DRESDEN_01067 = {
 }
 
 
-def fake_urlopen(monkeypatch, body=None, error=None):
+def fake_urlopen(monkeypatch, body=None, error=None, answers=None):
+    # `answers` maps a URL to its own body or exception; other URLs get `body` / `error`.
     requested = []
 
     def urlopen(url, timeout):
         requested.append(url)
-        if error:
-            raise error
-        return io.BytesIO(body if isinstance(body, bytes) else json.dumps(body).encode())
+        answer = (answers or {}).get(url, error or body)
+        if isinstance(answer, BaseException):
+            raise answer
+        return io.BytesIO(answer if isinstance(answer, bytes) else json.dumps(answer).encode())
 
     monkeypatch.setattr(urllib.request, "urlopen", urlopen)
     return requested
@@ -74,10 +76,31 @@ def test_leading_zero_is_restored(monkeypatch):
     assert requested == ["https://api.zippopotam.us/de/01067"]
 
 
-# An unknown postal code comes back as 404 with an empty body.
+# An unknown postal code comes back as 404 with an empty body. It only counts as "not found"
+# if the known code 10115 is still found afterwards.
 def test_unknown_postal_code_is_not_found(monkeypatch):
-    fake_urlopen(monkeypatch, error=http_error(404))
+    requested = fake_urlopen(
+        monkeypatch,
+        answers={
+            "https://api.zippopotam.us/de/12340": http_error(404),
+            "https://api.zippopotam.us/de/10115": BERLIN_10115,
+        },
+    )
     assert lookup_postal_code(12340) == {"status": "not_found"}
+    assert requested == ["https://api.zippopotam.us/de/12340", "https://api.zippopotam.us/de/10115"]
+
+
+# If the known code fails too, the 404 means the service (or our request) is broken, not the code.
+@pytest.mark.parametrize("known_code_answer", [http_error(404), TimeoutError("timed out"), {}])
+def test_404_with_broken_service_is_unavailable(monkeypatch, known_code_answer):
+    fake_urlopen(
+        monkeypatch,
+        answers={
+            "https://api.zippopotam.us/de/12340": http_error(404),
+            "https://api.zippopotam.us/de/10115": known_code_answer,
+        },
+    )
+    assert lookup_postal_code(12340) == {"status": "unavailable"}
 
 
 # Any other failure means the lookup is unavailable, not that the code is wrong.

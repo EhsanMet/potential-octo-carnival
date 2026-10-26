@@ -18,10 +18,8 @@
           Coordinates not available.
         {% endif %}
       </p>
-    {% elif location and location.status == "not_found" %}
-      <p class="location">We couldn't find this postal code in the directory. Please double-check it.</p>
     {% elif location %}
-      <p class="location">Postal code lookup is not available right now.</p>
+      <p class="location">We couldn't verify this postal code right now, so it was accepted based on its format.</p>
     {% endif %}
   {% endif %}
 

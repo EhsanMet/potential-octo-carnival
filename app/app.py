@@ -17,6 +17,12 @@ def _to_int(text):
         return None
 
 
+def _add_error(result, field, message):
+    result["errors"][field] = message
+    result["status"] = "error"
+    result["message"] = " ".join(result["errors"].values())
+
+
 @app.route("/", methods=["GET", "POST"])
 def building_form():
     values = {field: request.form.get(field, "") for field in FIELDS}
@@ -30,9 +36,14 @@ def building_form():
             heating_type=values["heating_type"],
             windows_type=values["windows_type"],
         )
-        # The lookup only adds information; it never blocks saving.
-        if result["status"] == "confirmed":
-            result["location"] = lookup_postal_code(zip_code)
+        # Only ask Zippopotam about codes that pass the local check. An unknown code blocks saving;
+        # if Zippopotam is unavailable, the local check is the backup and the form still saves.
+        if "zip_code" not in result["errors"]:
+            location = lookup_postal_code(zip_code)
+            if location["status"] == "not_found":
+                _add_error(result, "zip_code", "This postal code doesn't exist. Please check it.")
+            else:
+                result["location"] = location
     return render_template(
         "building_form.html",
         values=values,

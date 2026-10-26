@@ -1,3 +1,5 @@
+import html
+
 from app import app
 
 VALID_FORM = {
@@ -55,19 +57,40 @@ def test_valid_submit_shows_location():
     assert b"52.532, 13.3922" in response.data
 
 
-def test_unknown_postal_code_still_saves_with_note(monkeypatch):
+def test_unknown_postal_code_shows_error_and_does_not_save(monkeypatch):
     import app as app_module
 
     monkeypatch.setattr(app_module, "lookup_postal_code", lambda zip_code: {"status": "not_found"})
     response = app.test_client().post("/", data=VALID_FORM)
+    assert b"Building characteristics saved." not in response.data
+    assert "This postal code doesn't exist." in html.unescape(response.get_data(as_text=True))
+
+
+# When Zippopotam is unavailable, the local check is the backup: the form still saves.
+def test_lookup_unavailable_saves_with_backup_note(monkeypatch):
+    import app as app_module
+
+    monkeypatch.setattr(app_module, "lookup_postal_code", lambda zip_code: {"status": "unavailable"})
+    response = app.test_client().post("/", data=VALID_FORM)
     assert b"Building characteristics saved." in response.data
-    assert "couldn't find this postal code" in response.get_data(as_text=True)
+    assert "couldn't verify this postal code right now" in response.get_data(as_text=True)
 
 
-def test_invalid_form_does_not_call_lookup(monkeypatch):
+def test_locally_invalid_zip_does_not_call_lookup(monkeypatch):
     import app as app_module
 
     calls = []
     monkeypatch.setattr(app_module, "lookup_postal_code", lambda zip_code: calls.append(zip_code))
-    app.test_client().post("/", data={**VALID_FORM, "area": "abc"})
+    response = app.test_client().post("/", data={**VALID_FORM, "zip_code": "999999"})
     assert calls == []
+    assert b"Zip code must be a valid German postal code." in response.data
+
+
+def test_unknown_zip_error_shows_together_with_other_errors(monkeypatch):
+    import app as app_module
+
+    monkeypatch.setattr(app_module, "lookup_postal_code", lambda zip_code: {"status": "not_found"})
+    response = app.test_client().post("/", data={**VALID_FORM, "area": "abc"})
+    page = html.unescape(response.get_data(as_text=True))
+    assert "This postal code doesn't exist." in page
+    assert "Area must be a whole number" in page
